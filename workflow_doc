@@ -1,0 +1,107 @@
+Change Detect Solo Project Workflow
+Justin Fowler
+last update 12/1/2023
+
+1. Download S2 images to tile directory
+    Used Open Hub https://scihub.copernicus.eu for test
+
+    Improvements:
+        scihub API, still limited to 2 parallel downlads per user
+        sentinel hub api for larger downloads
+
+2. safe_dir_reorg.py
+    Unzip .SAFE directories
+    Create date directories for where data will be stored
+    For L2A data creates MSIL2A directory, L1C data creates MSIL1C directory
+        Copies .jp2 bands 2,3,4,8,11,12 and SCL to MSIL2A
+        Copies .jp2 bands 2,3,4,8,11,12,8a,10 to MSIL1C
+    Deletes unzip'd .SAFE directories
+
+    Improvements:
+        Lot's of looping, could search for specific files more efficiently
+
+3. download_glo30.py
+    Given tile name, uses sentinel_2_index_shapefile.shp to download GLO 30 dem from aws
+    Downloads 1x1's and mosaic's them (with buffer) to sentinel 2 grid
+
+    outputs:
+        a. [gran]_glo30_buf.tif
+
+    Improvements:
+        Currently not using DEM, add terrain shadow calculation further downstream
+
+4. stack_vrt.py
+    Takes MSIL2A directory and stacks bands 2,3,4,8,11,12 to 1,2,3,4,5,6
+    Also uses SCL to mask out cloud mask and cloud shadow, set's nodata to -9999
+
+    Outputs:
+        a.  [tile]_[date]_6band.vrt
+        b.  [tile]_[date]_6band_masked.tif
+
+    Improvements:
+        np.where can be slow, try numpy mask module
+        also could be useful to chip
+
+5.normalize_dif.py and create_indicies.py
+    normalize_dif.py
+        Creates functions
+        norm_dif: create normalized differences, like ndvi.
+            Clamps over |100|
+            assumes -9999 as nodata
+        msavi_calc: creates msavi
+            Clamps over |100|
+            assumes -9999
+
+        Improvements:
+            set up class correctly, with self as first input parameter
+            make nodata an input parameter
+
+    create_indicies
+        Uses function in normalize_dif.py
+        Loops through date directories, find's '_6band_masked.tif' and creates:
+
+        Outputs:
+            a.[tile]_[date]_ndvi.tif
+            b.[tile]_[date]_ndwi.tif
+            c.[tile]_[date]_ndbi.tif
+            d.[tile]_[date]_ndsi.tif
+            e.[tile]_[date]_msavi.tif
+
+6. stack_time.py and stack_bands_time.py
+    stack_time.py:
+        takes date indicies(5.a->e) and stacks them in a time seires vrt
+        Output:
+            a.time_series/[tile]_ndvi_stack.vrt
+            b.time_series/[tile]_ndwi_stack.vrt
+            c.time_series/[tile]_ndbi_stack.vrt
+            d.time_series/[tile]_ndsi_stack.vrt
+            e.time_series/[tile]_msavi_stack.vrt
+
+    stack_bands_time.py:
+        takes date 6band_masked.tif's (4.b) and stacks them in a time seires vrt
+        Output:
+            a.time_series/[tile]_b1_stack.tif
+            b.time_series/[tile]_b2_stack.tif
+            c.time_series/[tile]_b3_stack.tif
+            d.time_series/[tile]_b4_stack.tif
+            e.time_series/[tile]_b5_stack.tif
+            f.time_series/[tile]_b6_stack.tif
+
+    Improvements:
+        Unsure if need 2 seperate scripts, or if need indicies time series at all
+
+7. time_series.py
+    Takes stats for time_series stacks
+
+    Outputs:
+    a. time_stats/[tile]_[timeseries]_mean.tif
+    b. time_stats/[tile]_[timeseries]_median.tif
+    c. time_stats/[tile]_[timeseries]_range.tif
+    d. time_stats/[tile]_[timeseries]_std.tif
+
+8. temporal_slope.py
+    take time_series and run linear regression on them, in order to determine temporal slope
+
+    Improvements:
+        Unsure if calculation I'm using is actually correct...
+        Learn sklearn better in order to rewrite this
