@@ -5,7 +5,7 @@ import numpy as np
 import time
 
 work_dir = r"E:\work\change_detect_solo"
-gran = "T37RBM"
+gran = "T18SUJ"
 gran_dir = join(work_dir, gran)
 time_series_dir = join(gran_dir, 'time_series')
 temporal_slope_dir = join(gran_dir, 'temp_slope')
@@ -106,6 +106,8 @@ for stack in os.listdir(time_series_dir):
 
     print(f'done with {bx_stack}\n{output_path} should be done')
     print("--- %s seconds ---" % (time.time() - start_time))
+
+    start_time2 = time.time()
     if join(time_series_dir, stack).endswith('stack.vrt'):
         bx_stack = join(time_series_dir, stack)
         outname = stack[:-4] + "tempslope.tif"
@@ -194,3 +196,5 @@ for stack in os.listdir(time_series_dir):
                     outSlope = sum_xy / sum_x2  # slope
                     # a = arr_mean - b*(num_bands) #intercept
                     dst_band.WriteArray(outSlope, x, y)
+    print(f'done with {bx_stack}\n{output_path} should be done')
+    print("--- %s seconds ---" % (time.time() - start_time2))
