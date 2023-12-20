@@ -2,12 +2,26 @@ Change Detect Solo Project Workflow
 Justin Fowler
 last update 12/1/2023
 
-1. Download S2 images to tile directory
-    Used Open Hub https://scihub.copernicus.eu for test
+1.access_sentinel_data dir: search_for_gran.py and download_seninel.py
+    search_for_gran.py:
+        input s2 gran, and exports to .csv all the s2 files that were in parameters
+            parameters: start_date, end_date,gran,productType,data_collection,cloudcover (set to 10)
 
-    Improvements:
-        scihub API, still limited to 2 parallel downlads per user
-        sentinel hub api for larger downloads
+    manually select scenes:
+        look through csv's and select ID,Name of scenes wanted
+        Select as many scenes as needed
+        can check Copernicus browser to see thumbnail of scenes
+
+        save csv as {gran}_select.csv
+
+        Improvements: csv's probably only need to include ID and Name when created in search_for_gran.py
+
+    download_seninel.py:
+        given {gran}_select.csv, download all scenes to tile directory
+        currently can only download 3 at a time, have to rerun.
+
+        Improvements: add a wait function after 3 have been downloaded, so don't have to rerun to get all
+
 
 2. safe_dir_reorg.py
     Unzip .SAFE directories
@@ -29,6 +43,7 @@ last update 12/1/2023
 
     Improvements:
         Currently not using DEM, add terrain shadow calculation further downstream
+        Came across a tile that covers 6 1x1's... so annoying
 
 4. stack_vrt.py
     Takes MSIL2A directory and stacks bands 2,3,4,8,11,12 to 1,2,3,4,5,6
@@ -99,9 +114,13 @@ last update 12/1/2023
     c. time_stats/[tile]_[timeseries]_range.tif
     d. time_stats/[tile]_[timeseries]_std.tif
 
-8. temporal_slope.py
+    Improvements:
+        Chip processing
+
+8. temporal_slope_v2.py
     take time_series and run linear regression on them, in order to determine temporal slope
+    Uses 512x512 chips to process so doesn't destroy RAM
+    numpy math to get linear regression slope
 
     Improvements:
-        Unsure if calculation I'm using is actually correct...
-        Learn sklearn better in order to rewrite this
+
