@@ -57,6 +57,15 @@ last update 12/1/2023
         np.where can be slow, try numpy mask module
         also could be useful to chip
 
+4B. Add new script to mosaic all scenes in a month together
+    Unmasked clouds are a real pain
+    Plan:
+        Download 1 scene per week (could do more but so much downloading...)
+        after all the scenes are masked, mosaic all scenes in a month
+        take the lowest value, missed clouds would be super high values theoretically
+            potentially will miss change, but it should be caught the next month so no biggie
+
+
 5.normalize_dif.py and create_indicies.py
     normalize_dif.py
         Creates functions
