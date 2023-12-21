@@ -91,6 +91,11 @@ last update 12/1/2023
             d.[tile]_[date]_ndsi.tif
             e.[tile]_[date]_msavi.tif
 
+5B. Need to take ndwi's and mask out the masked.tif's again... maybe this should be done before...
+    can be part of masked process, do it with stack_vrt.py.
+    if part of mask, won't get water change...
+    maybe, just use ndwi time series to mask out for stats in
+
 6. stack_time.py and stack_bands_time.py
     stack_time.py:
         takes date indicies(5.a->e) and stacks them in a time seires vrt
@@ -133,3 +138,9 @@ last update 12/1/2023
 
     Improvements:
 
+9. std_tempslope.py
+    create script to threshold based on standard deviation of temporal slope file
+    add water/ocean mask to get rid of std being skewed?
+        for water mask, use focal filters (check Geoprocessing with Python book)
+
+10. create script to find date of change, using step filter - Chris P
