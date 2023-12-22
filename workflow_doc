@@ -143,4 +143,23 @@ last update 12/1/2023
     add water/ocean mask to get rid of std being skewed?
         for water mask, use focal filters (check Geoprocessing with Python book)
 
-10. create script to find date of change, using step filter - Chris P
+10. step_time.py
+    get date of change
+
+11. threshold tempslope_std, could include or streamline this in step 9, but i want to see all intermediate outputs
+    Might not even need to create this file...
+    Do it for now to get visualization
+    std >= |3|
+    std >= |4|
+
+12. combine outputs of 10 and 11 into Vector layer!
+    Attributes:
+        change date (from step 10)
+        tempslope std value (from step 9 actually, not 11)
+        ndvi std value (greater than % probably ag/veg change)
+        ndwi std value (greater than % probably water)
+
+    Future Attributes, layers not yet scripted
+        max ndvi post change (veg regrowth)
+        shadow likely hood
+        brightness increase/decrease (high albedo buildings)
