@@ -73,10 +73,22 @@ for stack in os.listdir(time_series_dir):
                 for i in range(1, num_bands + 1):
                     # print("layer number: {}".format(i))
                     band = ds.GetRasterBand(i).ReadAsArray(x, y, cols, rows).astype('float32')
-                    arr = np.where(band == -9999, 0, band)
-                    array_layers.append(arr)
+                    #arr = np.where(band == -9999, np.nan, band)
+                    array_layers.append(band)
+
+                #mean_arr = np.NaN if np.all(array_layers != array_layers) else np.nanmean(array_layers,axis=0)
+                mean_arr0 = np.nanmean(array_layers,axis=0)#getting errors with all Nan slices
+                mean_arr = np.where(mean_arr0 == -9999, 0, mean_arr0) #if every band = nan then avg will be nan, so this sets it to 0
+                #for things like ocean masks
+                #dst_band.WriteArray(mean_arr, x, y)
+
+                for k in range(len(array_layers)):
+                    array_layers[k][np.isnan(array_layers[k])] = mean_arr[np.isnan(array_layers[k])]
+
                 diff_arr = np.diff(array_layers, axis=0)
                 diff_abs = np.abs(diff_arr) #getting absolute value
+
                 max_arg = np.nanargmax(diff_arr, axis=0)+2 #return value is index 0 = b2-b1, 1 = b3-b2, 2 = b4-b3, etc
                 #so +2 should be the band number where change first appears
                 dst_band.WriteArray(max_arg, x, y)
+

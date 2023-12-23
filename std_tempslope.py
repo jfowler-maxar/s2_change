@@ -148,7 +148,8 @@ for slope in os.listdir(temporal_slope_dir):
                         count_y = count_y + y
 
                     # this is where calculations/data maniuplations happen
-                    arr = ds.GetRasterBand(1).ReadAsArray(x, y, cols, rows).astype('float32')
+                    band = ds.GetRasterBand(1).ReadAsArray(x, y, cols, rows).astype('float32')
+                    arr = np.where(band<=-100,0,band)
                     # setup water mask
                     mask_arr = mask_ds.GetRasterBand(1).ReadAsArray(x, y, cols, rows)
                     masked_arr = np.where(mask_arr == 0, np.nan, arr)
