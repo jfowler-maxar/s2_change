@@ -40,9 +40,9 @@ for i in range(len(month1)):
     # second scene will take first image and month1[i] and make first tmp, then after that, will take all tmps
 
     elif i == 1:
-        out_name1 = gran + '_' + date + '_tmp1.tif'
+        out_name1 = gran + f'_tmp{i}.tif'
         out_path1 = join(mosaic_dir, out_name1)
-        print(out_path1)
+        print(out_name1)
 
         ds_0 = gdal.Open(month1[i - 1])  # open first scene of month
         ds = gdal.Open(month1[i])
@@ -113,11 +113,11 @@ for i in range(len(month1)):
         ds_0 = None
         ds = None
 
-    else:
-        out_name1 = gran + '_' + date + '_tmp1.tif'
+    elif i >1:
+        out_name1 = gran + f'_tmp{i - 1}.tif'
         out_path1 = join(mosaic_dir, out_name1)
 
-        out_name2 = gran + '_' + date + f'_tmp{i}.tif'
+        out_name2 = gran + f'_tmp{i}.tif'
         out_path2 = join(mosaic_dir, out_name2)
         print(out_name2)
 
@@ -130,7 +130,7 @@ for i in range(len(month1)):
         num_bands = ds.RasterCount
 
         drv = gdal.GetDriverByName("GTiff")
-        dst_ds = drv.Create(out_path1,
+        dst_ds = drv.Create(out_path2,
                             xsize,
                             ysize,
                             6,
