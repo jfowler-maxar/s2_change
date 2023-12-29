@@ -28,7 +28,7 @@ ysize = ds_ts.RasterYSize
 num_bands = ds_ts.RasterCount
 
 #setup output
-out_name = f'{gran}_b{bnum}_ch.tif'
+out_name = f'{gran}_b{bnum}_ch_v2.tif'
 output_path = join(chang_dir, out_name)
 drv = gdal.GetDriverByName("GTiff")
 dst_ds = drv.Create(output_path,
@@ -49,4 +49,28 @@ ds_dn = None
 #where tempslope_std >= |std|, keep date_num, else 0
 chang = np.where(np.absolute(arr_ts)>=3,arr_dn,0)
 mask_nan = np.where(arr_ts<=-9999,0,chang)
-dst_band.WriteArray(mask_nan)
+
+#going to try to do focal avg, to remove single pixels
+#geoprocessing with python textbook pg 251
+def make_slices(data,win_size):
+    '''return a list of slices given a window size.
+    data - 2d array to get slices from
+    win_size - tuple of (rows,colums) for the moving window
+    '''
+    rows = data.shape[0] - win_size[0] + 1
+    cols = data.shape[1] - win_size[1] + 1
+    slices = []
+    for i in range(win_size[0]):
+        for j in range(win_size[1]):
+            slices.append(data[i:rows+i, j:cols+j])
+    return slices
+
+slices = make_slices(mask_nan,(3,3))
+stacked_data = np.dstack(slices)
+
+rows, cols = ysize, xsize
+out_data = np.ones((rows,cols),np.int16)
+#out_data[1:-1, 1:-1] = np.mean(stacked_data,2)
+out_data[1:-1, 1:-1] = np.mean(stacked_data,2)
+
+dst_band.WriteArray(out_data)
