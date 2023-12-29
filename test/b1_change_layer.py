@@ -48,5 +48,5 @@ ds_dn = None
 
 #where tempslope_std >= |std|, keep date_num, else 0
 chang = np.where(np.absolute(arr_ts)>=3,arr_dn,0)
-mask_nan = np.where(arr_ts==-9999,0,chang)
+mask_nan = np.where(arr_ts<=-9999,0,chang)
 dst_band.WriteArray(mask_nan)
