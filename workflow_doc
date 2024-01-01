@@ -65,6 +65,8 @@ last update 12/1/2023
         take the lowest value, missed clouds would be super high values theoretically
             potentially will miss change, but it should be caught the next month so no biggie
 
+    Move all date dirs into yyyymm dirs, then go through and mosaic them based of yyyymm dirs
+
 
 5.normalize_dif.py and create_indicies.py
     normalize_dif.py
@@ -146,16 +148,10 @@ last update 12/1/2023
 10. step_time.py
     get date of change
 
-11. threshold tempslope_std, could include or streamline this in step 9, but i want to see all intermediate outputs
-    Might not even need to create this file...
-    Do it for now to get visualization
-    std >= |3|
-    std >= |4|
-
-12. combine outputs of 10 and 11 into Vector layer!
+11. combine outputs of 10 and 11 into Vector layer!
     Attributes:
-        change date (from step 10)
-        tempslope std value (from step 9 actually, not 11)
+        change date (step 10)
+        tempslope std > |3| and |4| (step 9)
         ndvi std value (greater than % probably ag/veg change)
         ndwi std value (greater than % probably water)
 
