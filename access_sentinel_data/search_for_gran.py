@@ -4,7 +4,16 @@ import pandas as pd
 import os
 from os.path import *
 
-work_dir = r'E:\work\change_detect_solo\T37RBM'
+work_dir = r'E:\work\change_detect_solo'
+gran = "T20LMR"
+gran_dir = join(work_dir,gran)
+if not exists(work_dir):
+    os.mkdir(work_dir)
+if not exists(gran_dir):
+    os.mkdir(gran_dir)
+text_dir = join(gran_dir,'text')
+if not exists(text_dir):
+    os.mkdir(text_dir)
 def get_access_token(username: str, password: str) -> str:
     data = {
         "client_id": "cdse-public",
@@ -55,7 +64,7 @@ print(df[columns_to_print].to_string)
 '''
 data_collection = "SENTINEL-2"
 productType = "MSIL2A"
-gran = "T37RBM"
+cloud_cover = '40'
 for i in range(1,13):
     if i<9:
         start_date = f"2023-0{i}-01"
@@ -72,18 +81,15 @@ for i in range(1,13):
                         f"$filter=contains(Name, '{gran}') and "
                         f"contains(Name, '{productType}') and "
                         f"Collection/Name eq '{data_collection}' and "
-                        f"Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 10.00) and "
+                        f"Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt {cloud_cover}.00) and "
                         f"ContentDate/Start gt {start_date}T00:00:00.000Z and "
                         f"ContentDate/Start lt {end_date}T00:11:00.000Z").json()
 
     df = pd.DataFrame.from_dict(json['value'])
 
-    csv_out = join(work_dir,f'{gran}_2023_{str(i)}_list.csv')
+    csv_out = join(text_dir,f'{gran}_2023_{str(i)}_list.csv')
 
     df.to_csv(csv_out)
-work_dir = r'E:\work\change_detect_solo\T37RBM'
-text_dir = join(work_dir,'text')
-gran = "T37RBM"
 
 csv_lst = []
 for csv in os.listdir(text_dir):
