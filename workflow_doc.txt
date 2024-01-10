@@ -152,7 +152,7 @@ last update 12/1/2023
     get date of change
 
 11. For now, just taking Blue band, will have to come up with better, change algorthim/rules later
-    a. test/b1_change_layers.py
+    a. vector_attrib/b1_change_layers.py
         combine's standard deviation of temp slope and step filter date
         Where std > |3|, keep the step filter date
         inputs:
@@ -161,7 +161,7 @@ last update 12/1/2023
         output:
             f'{gran}_b{bnum}_ch_tmp.tif'#tmp till goes through sieve
 
-    b. test/ch_layer_sieve.py
+    b. vector_attrib/ch_layer_sieve.py
         Remove single pixels (seems to only remove single pixels surrounded by 0s)
         input: f'{gran}_b{bnum}_ch_tmp.tif
         output: f'{gran}_b{bnum}_ch.tif'
@@ -169,18 +169,20 @@ last update 12/1/2023
         Improvements:
             play around more with gdal_sieve.py, figure out how to remove all single pixels
 
-    c. test/vectorize.py
+    c. vector_attrib/vectorize.py
         Use gdal.Polygonize to export raster to vector
         input: f'{gran}_b{bnum}_ch.tif'
         output: f'{gran}_b{bnum}_ch_tmp.shp'
 
+        Looks like a bug? seeing a date=10, when the max should be 9...
+
 12. Add attribution
-    Will likely have to seperate out into more steps, create raster layers, then apply to vec layers
-    Attributes:
-        convert change date to actual date
-        tempslope std value
-        ndvi std value (greater than % probably ag/veg change)
-        ndwi std value (greater than % probably water)
+    vec_attrib1.py
+        slope_std, float
+        veg_mean, veg or non veg
+        veg_std, low/high variation
+        water_std, low/high variation
+
 
     Future Attributes, layers not yet scripted
         max ndvi post change (veg regrowth)
