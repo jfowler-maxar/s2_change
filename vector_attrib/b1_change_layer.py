@@ -50,27 +50,4 @@ ds_dn = None
 chang = np.where(np.absolute(arr_ts)>=3,arr_dn,0)
 mask_nan = np.where(arr_ts<=-9999,0,chang)
 
-#going to try to do focal avg, to remove single pixels
-#geoprocessing with python textbook pg 251
-def make_slices(data,win_size):
-    '''return a list of slices given a window size.
-    data - 2d array to get slices from
-    win_size - tuple of (rows,colums) for the moving window
-    '''
-    rows = data.shape[0] - win_size[0] + 1
-    cols = data.shape[1] - win_size[1] + 1
-    slices = []
-    for i in range(win_size[0]):
-        for j in range(win_size[1]):
-            slices.append(data[i:rows+i, j:cols+j])
-    return slices
-
-slices = make_slices(mask_nan,(3,3))
-stacked_data = np.dstack(slices)
-
-rows, cols = ysize, xsize
-out_data = np.ones((rows,cols),np.int16)
-#out_data[1:-1, 1:-1] = np.mean(stacked_data,2)
-out_data[1:-1, 1:-1] = np.mean(stacked_data,2)
-
-dst_band.WriteArray(out_data)
+dst_band.WriteArray(mask_nan)
