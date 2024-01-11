@@ -178,6 +178,9 @@ last update 12/1/2023
 
 12. Add attribution
     vec_attrib1.py
+        uses rasterstats, zonal stats which takes forever
+
+    vec_attrib_test2.py, uses centriod, point is much faster, but centriod might not be value inside poly
         slope_std, float
         veg_mean, veg or non veg
         veg_std, low/high variation
