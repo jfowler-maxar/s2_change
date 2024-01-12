@@ -53,9 +53,9 @@ last update 12/1/2023
         a.  [tile]_[date]_6band.vrt
         b.  [tile]_[date]_6band_masked.tif
 
-    Improvements:
-        np.where can be slow, try numpy mask module
-        also could be useful to chip
+    stack_vrt_v2.py
+        Set's up files to be in {tile}\{month}\{date} dir's
+        To be immediately ready for mosaic_indiv_bands.py
 
 4B. mosaic_images:
     reorg_date_to_month.py
@@ -124,8 +124,9 @@ last update 12/1/2023
     Improvements:
         Unsure if need 2 seperate scripts, or if need indicies time series at all
 
-7. time_series.py
+7. time_series_v2.py
     Takes stats for time_series stacks
+    uses chips so doesnt destroy RAM
 
     Outputs:
     a. time_stats/[tile]_[timeseries]_mean.tif
@@ -133,8 +134,6 @@ last update 12/1/2023
     c. time_stats/[tile]_[timeseries]_range.tif
     d. time_stats/[tile]_[timeseries]_std.tif
 
-    Improvements:
-        Chip processing
 
 8. temporal_slope_v2.py
     take time_series and run linear regression on them, in order to determine temporal slope
