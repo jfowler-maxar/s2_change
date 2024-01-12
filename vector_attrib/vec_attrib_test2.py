@@ -73,7 +73,7 @@ gdf['veg_std'] = np.where(gdf['veg_std'] >= 20,'veg','non-veg')
 print('working on adding water')
 gdf['water_std'] = [x for x in src.sample(coord_list)]
 gdf['water_std'] = gdf['water_std'].astype('int32')
-gdf['water_std'] = np.where(gdf['water_std'] >= 20,'veg','non-veg')
+gdf['water_std'] = np.where(gdf['water_std'] >= 20,'water','non-water')
 
 
 print("geopandas clipping done --- %s seconds ---" % (time.time() - start_time))
