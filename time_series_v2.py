@@ -125,7 +125,7 @@ def main():
 
                 # setup output
                 drv = gdal.GetDriverByName("GTiff")
-                dst_ds = drv.Create(mean_raster,
+                dst_ds = drv.Create(median_raster,
                                     xsize,
                                     ysize,
                                     1,
@@ -193,7 +193,7 @@ def main():
 
                 # setup output
                 drv = gdal.GetDriverByName("GTiff")
-                dst_ds = drv.Create(mean_raster,
+                dst_ds = drv.Create(std_rastar,
                                     xsize,
                                     ysize,
                                     1,
