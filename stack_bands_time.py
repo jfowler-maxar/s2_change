@@ -2,8 +2,8 @@ import os
 from os.path import *
 from osgeo import gdal
 
-work_dir = r"E:\work\change_detect_solo"
-gran = "T18SUJ"
+work_dir = r'D:\s2_change\tiles'
+gran = "T49QDD"
 gran_dir = join(work_dir, gran)
 time_series_dir = join(gran_dir, 'time_series')
 
@@ -11,40 +11,40 @@ if not os.path.exists(time_series_dir):
     os.mkdir(time_series_dir)
 
 print('creating tmp bands')
-for date in os.listdir(gran_dir):
-    if len(date) == 8 and date.startswith('2'):
-        date_dir = join(gran_dir, date)
-        gran_date = gran + "_" + date
-        masked_tif = join(date_dir, gran_date + '_6band_masked.tif')
+for month in os.listdir(gran_dir):
+    if len(month) == 6 and month.startswith('2'):
+        month_dir = join(gran_dir, month)
+        gran_month = gran + "_" + month
+        masked_tif = join(month_dir, gran_month + '_mosaic.tif')
         if not exists(masked_tif):
             print('no {}'.format(masked_tif))
             exit(100)
-        b1_vrt = join(date_dir, gran + '_b1_tmp.vrt')
+        b1_vrt = join(month_dir, gran + '_b1_tmp.vrt')
         if not exists(b1_vrt):
-            print('creating tmp b1_vrt')
+            print(f'creating tmp {b1_vrt}')
             gdal.BuildVRT(b1_vrt, masked_tif, bandList='1', resolution='highest')
 
-        b2_vrt = join(date_dir, gran + '_b2_tmp.vrt')
+        b2_vrt = join(month_dir, gran + '_b2_tmp.vrt')
         if not exists(b2_vrt):
             print('creating tmp b2_vrt')
             gdal.BuildVRT(b2_vrt, masked_tif, bandList='2', resolution='highest')
 
-        b3_vrt = join(date_dir, gran + '_b3_tmp.vrt')
+        b3_vrt = join(month_dir, gran + '_b3_tmp.vrt')
         if not exists(b3_vrt):
             print('creating tmp b3_vrt')
             gdal.BuildVRT(b3_vrt, masked_tif, bandList='3', resolution='highest')
 
-        b4_vrt = join(date_dir, gran + '_b4_tmp.vrt')
+        b4_vrt = join(month_dir, gran + '_b4_tmp.vrt')
         if not exists(b4_vrt):
             print('creating tmp b4_vrt')
             gdal.BuildVRT(b4_vrt, masked_tif, bandList='4', resolution='highest')
 
-        b5_vrt = join(date_dir, gran + '_b5_tmp.vrt')
+        b5_vrt = join(month_dir, gran + '_b5_tmp.vrt')
         if not exists(b5_vrt):
             print('creating tmp b5_vrt')
             gdal.BuildVRT(b5_vrt, masked_tif, bandList='5', resolution='highest')
 
-        b6_vrt = join(date_dir, gran + '_b6_tmp.vrt')
+        b6_vrt = join(month_dir, gran + '_b6_tmp.vrt')
         if not exists(b6_vrt):
             print('creating tmp b6_vrt')
             gdal.BuildVRT(b6_vrt, masked_tif, bandList='6', resolution='highest')
@@ -57,21 +57,22 @@ band_3_list = []
 band_4_list = []
 band_5_list = []
 band_6_list = []
-for date in os.listdir(gran_dir):
-    if len(date) == 8 and date.startswith('2'):
-        for tmp in os.listdir(join(gran_dir, date)):
+print(band_1_list)
+for month in os.listdir(gran_dir):
+    if len(month) == 6 and month.startswith('2'):
+        for tmp in os.listdir(join(gran_dir, month)):
             if tmp.endswith('b1_tmp.vrt'):
-                band_1_list.append(join(gran_dir, date, tmp))
+                band_1_list.append(join(gran_dir, month, tmp))
             if tmp.endswith('b2_tmp.vrt'):
-                band_2_list.append(join(gran_dir, date, tmp))
+                band_2_list.append(join(gran_dir, month, tmp))
             if tmp.endswith('b3_tmp.vrt'):
-                band_3_list.append(join(gran_dir, date, tmp))
+                band_3_list.append(join(gran_dir, month, tmp))
             if tmp.endswith('b4_tmp.vrt'):
-                band_4_list.append(join(gran_dir, date, tmp))
+                band_4_list.append(join(gran_dir, month, tmp))
             if tmp.endswith('b5_tmp.vrt'):
-                band_5_list.append(join(gran_dir, date, tmp))
+                band_5_list.append(join(gran_dir, month, tmp))
             if tmp.endswith('b6_tmp.vrt'):
-                band_6_list.append(join(gran_dir, date, tmp))
+                band_6_list.append(join(gran_dir, month, tmp))
 
 band_1_list.sort()
 band_2_list.sort()
@@ -79,7 +80,7 @@ band_3_list.sort()
 band_4_list.sort()
 band_5_list.sort()
 band_6_list.sort()
-print('Done looping through dates and creating lists')
+print('Done looping through months and creating lists')
 
 b1_stack = join(time_series_dir, gran + "_b1_stack_tmp.vrt")
 b2_stack = join(time_series_dir, gran + "_b2_stack_tmp.vrt")
@@ -89,7 +90,7 @@ b5_stack = join(time_series_dir, gran + "_b5_stack_tmp.vrt")
 b6_stack = join(time_series_dir, gran + "_b6_stack_tmp.vrt")
 
 # creating vrt band stacks for each band
-print('create vrt band stacks (1 band for every date)')
+print('create vrt band stacks (1 band for every month)')
 if not exists(b1_stack):
     print('stacking b1 blue')
     gdal.BuildVRT(b1_stack, band_1_list, separate='separate', resolution='highest')
@@ -139,14 +140,14 @@ if not exists(b6_stack_tif):
 # done creating time series stacks of each band, probably not the most efficient
 # now to go back and delete all the tmps
 print('deleting all tmp files')
-for date in os.listdir(gran_dir):
-    if len(date) == 8 and date.startswith('2'):
-        date_dir = join(gran_dir, date)
-        gran_date = gran + "_" + date
-        for tmp in os.listdir(date_dir):
+for month in os.listdir(gran_dir):
+    if len(month) == 6 and month.startswith('2'):
+        month_dir = join(gran_dir, month)
+        gran_month = gran + "_" + month
+        for tmp in os.listdir(month_dir):
             if tmp.endswith('tmp.vrt'):
                 print('removing {}'.format(tmp))
-                os.remove(join(date_dir, tmp))
+                os.remove(join(month_dir, tmp))
 for tmp in os.listdir(time_series_dir):
     if tmp.endswith('_tmp.vrt'):
         print('removing {}'.format(tmp))
