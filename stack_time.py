@@ -12,7 +12,7 @@ if os.path.exists(time_series_dir) == False:
     os.mkdir(time_series_dir)
 
 #take all the various indicies and stack them with gdalbuildvrt
-#indicies are in date dir's
+#indicies are in month dir's
 #initialize lists
 msavi_list= []
 ndbi_list= []
@@ -20,23 +20,23 @@ ndsi_list= []
 ndvi_list= []
 ndwi_list= []
 
-for date in os.listdir(gran_dir):
-    if len(date) == 8 and date.startswith('2'):
-        l1c_dir = join(gran_dir, date, 'MSIL1C')
-        l2a_dir = join(gran_dir, date, 'MSIL2A')
-        gran_date = gran + "_" + date
-        for tif in os.listdir(join(gran_dir,date)):
+for month in os.listdir(gran_dir):
+    if len(month) == 6 and month.startswith('2'):
+        l1c_dir = join(gran_dir, month, 'MSIL1C')
+        l2a_dir = join(gran_dir, month, 'MSIL2A')
+        gran_month = gran + "_" + month
+        for tif in os.listdir(join(gran_dir,month)):
             if tif.endswith('msavi.tif'):
-                msavi_list.append(join(gran_dir,date,tif))
+                msavi_list.append(join(gran_dir,month,tif))
             elif tif.endswith('ndbi.tif'):
-                ndbi_list.append(join(gran_dir,date,tif))
+                ndbi_list.append(join(gran_dir,month,tif))
             elif tif.endswith('ndsi.tif'):
-                ndsi_list.append(join(gran_dir,date,tif))
+                ndsi_list.append(join(gran_dir,month,tif))
             elif tif.endswith('ndvi.tif'):
-                ndvi_list.append(join(gran_dir,date,tif))
+                ndvi_list.append(join(gran_dir,month,tif))
             elif tif.endswith('ndwi.tif'):
-                ndwi_list.append(join(gran_dir,date,tif))
-print('Done looping through dates and creating lists')
+                ndwi_list.append(join(gran_dir,month,tif))
+print('Done looping through months and creating lists')
 #just to make sure in old->new order
 msavi_list.sort()
 ndbi_list.sort()
