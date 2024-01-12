@@ -13,32 +13,39 @@ import shutil
 #R20m has SCL_20m.jp2
 
 #setup work dir's
-work_dir = r"E:\work\change_detect_solo"
-gran = "T18SUJ"
+work_dir = r'D:\s2_change\tiles'
+gran = "T49QDD"
 gran_dir = join(work_dir,gran)
 for z in os.listdir(gran_dir):
     if z.endswith(".zip"):
         #print(z)
-        date = z.split("_")[2][0:8]
-        #print(date)
-        date_dir = join(gran_dir,date)
-        if os.path.exists(date_dir) ==False:
-            print("creating {}".format(date_dir))
-            os.mkdir(date_dir)
-        if os.path.exists(join(date_dir,z[:-3]+"safe")) == False:
+        month = z.split("_")[2][0:6]
+        #print(month)
+        month_dir = join(gran_dir,month)
+        if os.path.exists(month_dir) ==False:
+            print("creating {}".format(month_dir))
+            os.mkdir(month_dir)
+        if os.path.exists(join(month_dir,z[:-3]+"safe")) == False:
             with ZipFile(join(gran_dir,z),'r') as zObject:
                 print("Unzipping: {}".format(z))
-                zObject.extractall(date_dir)
+                zObject.extractall(month_dir)
             zObject.close()
         else:
             print("no need to unzip {}".format(z))
 #copy files now from SAFE to L1C and L2A dir's
-for date in os.listdir(gran_dir):
-    if len(date) == 8 and date.startswith('2'):
-        print("Going into {} dir's".format(date))
-        date_dir = join(gran_dir, date)
-        for i in os.listdir(date_dir):
+for month in os.listdir(gran_dir):
+    if len(month) == 6 and month.startswith('2'):
+        print("Going into {} dir's".format(month))
+        month_dir = join(gran_dir, month)
+        for i in os.listdir(month_dir):
             if i.endswith(".SAFE"):
+                #need to create date dir's
+                date = i.split("_")[2][0:8]
+                print("create {} dir".format(date))
+                date_dir = join(month_dir,date)
+                if not exists(date_dir):
+                    os.mkdir(date_dir)
+
                 processing_level = i.split("_")[1]
                 if processing_level == "MSIL1C":
                     print("create {} dir".format(processing_level))
@@ -47,7 +54,7 @@ for date in os.listdir(gran_dir):
                         os.mkdir(processing_level_dir)
                     #now take jp2s and meta data files
                     #super long names for the .safe's...
-                    safe_dir = join(date_dir,i)
+                    safe_dir = join(month_dir,i)
                     GRANULE_dir = join(safe_dir,"GRANULE")
                     for j in os.listdir(GRANULE_dir):
                         j_dir = join(GRANULE_dir, j)
@@ -110,7 +117,7 @@ for date in os.listdir(gran_dir):
                         os.mkdir(processing_level_dir)
                     # now take jp2s and meta data files
                     # super long names for the .safe's...
-                    safe_dir = join(date_dir, i)
+                    safe_dir = join(month_dir, i)
                     GRANULE_dir = join(safe_dir, "GRANULE")
                     for j in os.listdir(GRANULE_dir):
                         j_dir = join(GRANULE_dir,j)
@@ -165,14 +172,14 @@ for date in os.listdir(gran_dir):
 
 #i could add a part to delete the .zip's, that's easy, but gonna hold on to them for now cause testing
 #I'll go ahead and delete the .SAFE's cause why not
-for date in os.listdir(gran_dir):
-    if len(date) == 8 and date.startswith('2'):
-        print("Going into {} dir's".format(date))
-        date_dir = join(gran_dir, date)
-        for i in os.listdir(date_dir):
+for month in os.listdir(gran_dir):
+    if len(month) == 6 and month.startswith('2'):
+        print("Going into {} dir's".format(month))
+        month_dir = join(gran_dir, month)
+        for i in os.listdir(month_dir):
             if i.endswith(".SAFE"):
-                print('deleting {} .SAFEs'.format(date))
-                shutil.rmtree(join(date_dir,i))
+                print('deleting {} .SAFEs'.format(month))
+                shutil.rmtree(join(month_dir,i))
 
 print("its done!")
 
