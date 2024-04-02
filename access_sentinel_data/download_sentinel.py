@@ -36,7 +36,7 @@ def get_access_token(username: str, password: str) -> str:
         )
     return r.json()["access_token"]
 
-access_token = get_access_token("fowlerjustin29@yahoo.com", "PanCakes2023@)@#")
+access_token = get_access_token("username", "password")
 '''
 #url = f"https://zipper.dataspace.copernicus.eu/odata/v1/Products(a5ab498a-7b2f-4043-ae2a-f95f457e7b3b)/$value"
 url = f"https://zipper.dataspace.copernicus.eu/odata/v1/Products(59c1ba79-24a3-5c3c-be9d-4409b9a6dcf6)/$value"
