@@ -33,7 +33,7 @@ def get_access_token(username: str, password: str) -> str:
         )
     return r.json()["access_token"]
 
-access_token = get_access_token("fowlerjustin29@yahoo.com", "PanCakes2023@)@#")
+access_token = get_access_token("USERNAME", "password")
 #print(access_token)
 '''
 start_date = "2023-01-01"
