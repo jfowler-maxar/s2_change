@@ -22,7 +22,7 @@ def get_access_token(username: str, password: str) -> str:
     return r.json()["access_token"]
 
 
-access_token = get_access_token("fowlerjustin29@yahoo.com", "PanCakes2023@)@#")
+access_token = get_access_token("username", "password")
 
 #access_token = get_access_token(
 #    getpass.getpass("Enter your username"),
