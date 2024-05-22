@@ -4,8 +4,8 @@ from osgeo import gdal
 import numpy as np
 #import time
 
-work_dir = r'D:\s2_change\tiles'
-gran = "T49QDD"
+work_dir = r'E:\work\change_detect_solo'
+gran = "T18SUJ"
 gran_dir = join(work_dir, gran)
 time_series_dir = join(gran_dir, 'time_series')
 chang_dir = join(gran_dir, 'change')
@@ -26,12 +26,15 @@ for stack in os.listdir(time_series_dir):
         out_path = join(chang_dir,out)
         print(f'working on {out_path}')
 
+        #out_mean = join(chang_dir,stack[:-9]+'_mean0.tif')
+
         drv = gdal.GetDriverByName("GTiff")
         dst_ds = drv.Create(out_path,
                             xsize,
                             ysize,
                             1,
-                            gdal.GDT_Byte,
+                            gdal.GDT_Byte
+                            #gdal.GDT_Int16
                             )
         dst_ds.SetGeoTransform(geoTransform)
         dst_ds.SetProjection(srs_prj)
@@ -58,7 +61,7 @@ for stack in os.listdir(time_series_dir):
                 count_x = count_x + x
             count_y = 0
             for y in range(0, ysize, block_ysize):
-                print(f'block xy: {x} {y}')
+                #print(f'block xy: {x} {y}')
                 if y + block_ysize < ysize:
                     rows = block_ysize
                     y_off = miny + (count_y * step_y)
@@ -73,14 +76,15 @@ for stack in os.listdir(time_series_dir):
                 for i in range(1, num_bands + 1):
                     # print("layer number: {}".format(i))
                     band = ds.GetRasterBand(i).ReadAsArray(x, y, cols, rows).astype('float32')
-                    #arr = np.where(band == -9999, np.nan, band)
-                    array_layers.append(band)
+                    arr = np.where(band <=0, np.nan, band)
+                    array_layers.append(arr)
 
-                #mean_arr = np.NaN if np.all(array_layers != array_layers) else np.nanmean(array_layers,axis=0)
                 mean_arr0 = np.nanmean(array_layers,axis=0)#getting errors with all Nan slices
-                mean_arr = np.where(mean_arr0 == -9999, 0, mean_arr0) #if every band = nan then avg will be nan, so this sets it to 0
+                #mean_arr = np.where(mean_arr0 == -9999, 0, mean_arr0) #if every band = nan then avg will be nan, so this sets it to 0
+                mean_arr = np.where(mean_arr0 <=0,np.nan,mean_arr0)
+
                 #for things like ocean masks
-                #dst_band.WriteArray(mean_arr, x, y)
+                #dst_band.WriteArray(mean_arr0, x, y)
 
                 for k in range(len(array_layers)):
                     array_layers[k][np.isnan(array_layers[k])] = mean_arr[np.isnan(array_layers[k])]
@@ -90,5 +94,6 @@ for stack in os.listdir(time_series_dir):
 
                 max_arg = np.nanargmax(diff_arr, axis=0)+2 #return value is index 0 = b2-b1, 1 = b3-b2, 2 = b4-b3, etc
                 #so +2 should be the band number where change first appears
+
                 dst_band.WriteArray(max_arg, x, y)
 
