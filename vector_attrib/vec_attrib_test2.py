@@ -42,11 +42,9 @@ print(month_lst)
 gdf = gpd.read_file(in_shp)
 gdf['month'] = gdf['date']
 #gdf['changedate'] = pd.cut(x=gdf.date,bins = date_lst,labels = month_lst)
-for i in range(len(month_lst)):
+for i in range(1,len(month_lst)+1):
     print(f'replacing {i} with {month_lst[i-1]}')
     print(type(i))
-    #j = int(month_lst[i])
-    #gdf['month'] = pd.DataFrame.replace(i,j)
     gdf['month'] = np.where(gdf['date'] == i,month_lst[i-1],gdf['month'])
 
 gdf = gpd.GeoDataFrame.drop(gdf,columns=['date'])#remove change number
