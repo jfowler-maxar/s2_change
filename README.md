@@ -3,7 +3,7 @@ Input sentinel 2 imagery and detect change
 
 Change Detect Solo Project Workflow
 Justin Fowler
-last update 12/1/2023
+last update 05/23/2024
 
 1.access_sentinel_data dir: search_for_gran.py and download_seninel.py
     search_for_gran.py:
@@ -138,12 +138,12 @@ last update 12/1/2023
     d. time_stats/[tile]_[timeseries]_std.tif
 
 
-8. temporal_slope_v2.py
+8. temporal_slope_v3.py
     take time_series and run linear regression on them, in order to determine temporal slope
     Uses 512x512 chips to process so doesn't destroy RAM
     numpy math to get linear regression slope
 
-    Improvements:
+    v3 now includes filter for outliers in stack. Things like missed clouds will be removed.
 
 9. std_tempslope.py
     create script to threshold based on standard deviation of temporal slope file
