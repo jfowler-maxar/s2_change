@@ -46,7 +46,7 @@ last update 05/23/2024
 
     Improvements:
         Currently not using DEM, add terrain shadow calculation further downstream
-        Came across a tile that covers 6 1x1's... so annoying
+        Came across a tile that covers 6 1x1's... need to add clause to calculate all 1x1's that intersect
 
 4. stack_vrt.py
     Takes MSIL2A directory and stacks bands 2,3,4,8,11,12 to 1,2,3,4,5,6
