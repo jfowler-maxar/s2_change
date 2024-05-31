@@ -3,7 +3,7 @@ Input sentinel 2 imagery and detect change
 
 Change Detect Solo Project Workflow
 Justin Fowler
-last update 05/23/2024
+last update 05/31/2024
 
 1.access_sentinel_data dir: search_for_gran.py and download_seninel.py
     search_for_gran.py:
@@ -46,7 +46,7 @@ last update 05/23/2024
 
     Improvements:
         Currently not using DEM, add terrain shadow calculation further downstream
-        Came across a tile that covers 6 1x1's... need to add clause to calculate all 1x1's that intersect
+        Came across a tile that covers 6 1x1's... so annoying
 
 4. stack_vrt.py
     Takes MSIL2A directory and stacks bands 2,3,4,8,11,12 to 1,2,3,4,5,6
@@ -154,28 +154,44 @@ last update 05/23/2024
     get date of change
 
 11. For now, just taking Blue band, will have to come up with better, change algorthim/rules later
+    added mean_filter_3x3.py
+        does a 3x3 uniform filter to smooth out the tempslope_std and date_num
+        Helps with edges of buildings type things, also just makes everything look cleaner. 
+
     a. vector_attrib/b1_change_layers.py
         combine's standard deviation of temp slope and step filter date
-        Where std > |3|, keep the step filter date
+        Where std > |5|, keep the step filter date
         inputs:
-            f'{gran}_b{bnum}_stacktempslope_std.tif')   #standard deviation layer
+            f'{gran}_b{bnum}_stacktempslope_std.tif'   #standard deviation layer
             f'{gran}_b{bnum}_date_num.tif'              #step filter detect layer
         output:
-            f'{gran}_b{bnum}_ch_tmp.tif'#tmp till goes through sieve
+            f'{gran}_b{bnum}_ch_tmp.tif'#tmp till goes through sieve 
+
+    Missing some change in T18SUJ becaues the standard deviation isn't high enough.
+    new script: vector_attrib/b1_change_layers_v2.py
+     adding in another flat threshold for temporal slope, > |75|
+     will also include "confidence measure in vector layer, using tempslope and tempslope_std
+    inputs:
+         f'{gran}_b{bnum}_stacktempslope_std.tif'   #standard deviation layer
+         f'{gran}_b{bnum}_date_num.tif'              #step filter detect layer
+         f'{gran}_b{bnum}_stacktempslope.tif'        #tempslope layer    
+     output:
+         f'{gran}_b{bnum}_ch_tmp.tif'#tmp till goes through sieve 
+
 
     b. vector_attrib/ch_layer_sieve.py
         Remove single pixels (seems to only remove single pixels surrounded by 0s)
         input: f'{gran}_b{bnum}_ch_tmp.tif
         output: f'{gran}_b{bnum}_ch.tif'
-
+    
         Improvements:
             play around more with gdal_sieve.py, figure out how to remove all single pixels
-
+    
     c. vector_attrib/vectorize.py
         Use gdal.Polygonize to export raster to vector
         input: f'{gran}_b{bnum}_ch.tif'
         output: f'{gran}_b{bnum}_ch_tmp.shp'
-
+    
         Looks like a bug? seeing a date=10, when the max should be 9...
 
 12. Add attribution
@@ -188,8 +204,14 @@ last update 05/23/2024
         veg_std, low/high variation
         water_std, low/high variation
 
+    vec_attrib_v3.py
+        slope_std, float
+        veg_mean, veg or non veg
+        veg_std, low/high variation
+        water_std, low/high variation
+        conf, high, med, and low. Using both tempslope and tempslope_std
 
-    Future Attributes, layers not yet scripted
-        max ndvi post change (veg regrowth)
-        shadow likely hood
-        brightness increase/decrease (high albedo buildings)
+        Future Attributes, layers not yet scripted
+            max ndvi post change (veg regrowth)
+            shadow likely hood
+            brightness increase/decrease (high albedo buildings)
